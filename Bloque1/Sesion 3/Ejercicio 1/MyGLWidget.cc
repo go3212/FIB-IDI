@@ -114,6 +114,7 @@ void MyGLWidget::modelTransform()
 	glm::mat4 TG (1.0);
 	TG = glm::translate(TG, transVec);
 	TG = glm::scale(TG, glm::vec3(scl, scl, scl));
+	
 
 	glUniformMatrix4fv(TGLoc, 1, false, &TG[0][0]);
 }
