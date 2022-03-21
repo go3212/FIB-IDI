@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "qopenglshader": "cpp",
+        "iostream": "cpp",
+        "qapplication": "cpp",
+        "qsurfaceformat": "cpp"
+    }
+}
