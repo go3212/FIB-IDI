@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "qopenglfunctions_3_3_core": "cpp",
+        "iostream": "cpp",
+        "chrono": "cpp",
+        "random": "cpp",
+        "limits": "cpp",
+        "valarray": "cpp",
+        "algorithm": "cpp"
+    }
+}
