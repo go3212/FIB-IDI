@@ -9,6 +9,43 @@
 #include "model.h"
 
 
+typedef struct BoundingBox
+{
+  glm::vec3 a, b;
+
+  BoundingBox(glm::vec3 a, glm::vec3 b)
+  {
+    this->a = a, this->b = b;
+  }
+
+  glm::vec3 get_center()
+  {
+    glm::vec3 ret;
+    ret[0] = (b[0] + a[0])/(float)2;
+    ret[1] = (b[1] + a[1])/(float)2;
+    ret[2] = (b[2] + a[2])/(float)2;
+    std::cout << ret[1];
+    return ret;
+  }
+  float get_radius()
+  {
+    glm::vec3 v = get_center();
+    v[0] = a[0] - v[0];
+    v[1] = a[1] - v[1];
+    v[2] = a[2] - v[2];
+    return glm::sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
+  }
+  glm::vec3 get_dim()
+  {
+    glm::vec3 dim;
+    dim[0] = glm::abs(a[0]-b[0]);
+    dim[1] = glm::abs(a[1]-b[1]);
+    dim[2] = glm::abs(a[2]-b[2]);
+    return dim;
+  }
+
+} BoundingBox;
+
 class BL2GLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core 
 {
   Q_OBJECT
@@ -39,6 +76,9 @@ class BL2GLWidget : public QOpenGLWidget, protected QOpenGLFunctions_3_3_Core
 
     glm::vec3 OBS, VRP, up;
     float FOV, ra, znear, zfar;
+
+    // Bounding BOx
+    BoundingBox* boundingbox;
 
     // attribute locations
     GLuint vertexLoc, colorLoc;

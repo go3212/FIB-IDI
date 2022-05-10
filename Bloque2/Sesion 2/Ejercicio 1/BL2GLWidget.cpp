@@ -59,6 +59,18 @@ void BL2GLWidget::viewTransform()
   glUniformMatrix4fv(VMLoc, 1, GL_FALSE, &VM[0][0]);
 }
 
+void BL2GLWidget::modelTransform (GLuint VAO) 
+{
+  // Matriu de transformació de model
+  glm::mat4 transform (1.0f);
+  transform = glm::scale(transform, glm::vec3(escala));
+  if (VAO == VAO_Homer)
+    transform = glm::rotate(transform, homer_deg, glm::vec3(0.0f, 1.0f, 0.0f));
+  if (VAO == VAO_suelo)
+    transform = glm::translate(transform, glm::vec3(0, -1.0f, 0));
+  glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
+}
+
 void BL2GLWidget::paintGL () 
 {
 // En cas de voler canviar els paràmetres del viewport, descomenteu la crida següent i
@@ -87,17 +99,6 @@ void BL2GLWidget::paintGL ()
   glBindVertexArray (0);
 }
 
-void BL2GLWidget::modelTransform (GLuint VAO) 
-{
-  // Matriu de transformació de model
-  glm::mat4 transform (1.0f);
-  transform = glm::scale(transform, glm::vec3(escala));
-  if (VAO == VAO_Homer)
-    transform = glm::rotate(transform, homer_deg, glm::vec3(0.0f, 1.0f, 0.0f));
-  if (VAO == VAO_suelo)
-    transform = glm::translate(transform, glm::vec3(0, -1.0f, 0));
-  glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
-}
 
 void BL2GLWidget::resizeGL (int w, int h) 
 {
@@ -195,6 +196,10 @@ void BL2GLWidget::creaBuffers ()
   glVertexAttribPointer(colorLoc, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), 0);
   glEnableVertexAttribArray(colorLoc);
 
+  glm::vec3 x, y;
+  x = glm::vec3(-4.0f, 0.0f, -4.0f);
+  y = glm::vec3(4.0f, 2.0f, 4.0f);
+  boundingbox = new BoundingBox(x, y);
 
   glBindVertexArray (0);
 }
