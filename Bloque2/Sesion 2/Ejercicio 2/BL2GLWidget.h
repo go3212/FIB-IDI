@@ -10,12 +10,13 @@
 #include <iostream>
 typedef struct BoundingBox
 {
+  // a is bottom left, b is top right.
+  bool is_init;
   glm::vec3 a, b;
 
-  BoundingBox(glm::vec3 a, glm::vec3 b)
-  {
-    this->a = a, this->b = b;
-  }
+  BoundingBox()
+  : is_init(false)
+  {}
 
   glm::vec3 get_center()
   {
@@ -23,7 +24,6 @@ typedef struct BoundingBox
     ret[0] = (b[0] + a[0])/(float)2;
     ret[1] = (b[1] + a[1])/(float)2;
     ret[2] = (b[2] + a[2])/(float)2;
-    std::cout << ret[1];
     return ret;
   }
   float get_radius()
@@ -41,6 +41,70 @@ typedef struct BoundingBox
     dim[1] = glm::abs(a[1]-b[1]);
     dim[2] = glm::abs(a[2]-b[2]);
     return dim;
+  }
+
+  void insert_model(const Model& model)
+  {
+    if (!is_init)
+    {
+      a[0] = b[0] = model.vertices()[0];
+      a[1] = b[1] = model.vertices()[1];
+      a[2] = b[2] = model.vertices()[2];
+      is_init = true;
+    }
+    for (int i = 0; i < model.vertices().size(); i+=3)
+    {
+      if (model.vertices()[i]   < a[0]) a[0] = model.vertices()[i];
+      if (model.vertices()[i+1] < a[1]) a[1] = model.vertices()[i+1];
+      if (model.vertices()[i+2] < a[2]) a[2] = model.vertices()[i+2];
+      if (model.vertices()[i]   > b[0]) b[0] = model.vertices()[i];
+      if (model.vertices()[i+1] > b[1]) b[1] = model.vertices()[i+1];
+      if (model.vertices()[i+2] > b[2]) b[2] = model.vertices()[i+2];
+    }
+  }
+  
+  void insert_model(const std::vector<glm::vec3>& data)
+  {
+    if (!is_init)
+    {
+      a = b = data[0];
+      is_init = true;
+    }
+    for (int i = 0; i < data.size(); i+=1)
+    {
+      if (data[i][0] < a[0]) a[0] = data[i][0];
+      if (data[i][1] < a[1]) a[1] = data[i][1];
+      if (data[i][2] < a[2]) a[2] = data[i][2];
+      if (data[i][0] > b[0]) b[0] = data[i][0];
+      if (data[i][1] > b[1]) b[1] = data[i][1];
+      if (data[i][2] > b[2]) b[2] = data[i][2];
+    }
+  }
+
+  void insert_model(glm::vec3* data, const int size)
+  {
+    if (!is_init)
+    {
+      a = b = data[0];
+      is_init = true;
+    }
+    for (int i = 0; i < size; i+=1)
+    {
+      if (data[i][0] < a[0]) a[0] = data[i][0];
+      if (data[i][1] < a[1]) a[1] = data[i][1];
+      if (data[i][2] < a[2]) a[2] = data[i][2];
+      if (data[i][0] > b[0]) b[0] = data[i][0];
+      if (data[i][1] > b[1]) b[1] = data[i][1];
+      if (data[i][2] > b[2]) b[2] = data[i][2];
+    }
+  }
+
+  void print_data()
+  {
+    std::cout << "a = (" << a[0] << ", " << a[1] << ", " << a[2] << ')' << std::endl;
+    std::cout << "b = (" << b[0] << ", " << b[1] << ", " << b[2] << ')' << std::endl;
+    std::cout << "center = (" << get_center()[0] << ", " << get_center()[1] << ", " << get_center()[2] << ')' << std::endl;
+    std::cout << "Radius: " << get_radius() << std::endl;
   }
 
 } BoundingBox;

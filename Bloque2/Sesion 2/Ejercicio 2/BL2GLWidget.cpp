@@ -22,12 +22,14 @@ void BL2GLWidget::ini_camera ()
   up =  glm::vec3(0.0f, 1.0f, 0.0f);
 
   // Ponemos el obs a 3*radio
-  OBS[2] += 3*boundingbox->get_radius();
+  OBS[2] += 3.0f*boundingbox->get_radius();
 
-  FOV = 2*asin((float)1/glm::sqrt(10));
+  FOV = 2.0f*asin(1.0f/3.0f);
   ra = 1.0f;
-  znear = 2*boundingbox->get_radius();
-  zfar = 4*boundingbox->get_radius();
+  znear = 2.0f*boundingbox->get_radius();
+  zfar = 4.0f*boundingbox->get_radius();
+
+  boundingbox->print_data();
 
   projectTransform();
   viewTransform();
@@ -66,13 +68,19 @@ void BL2GLWidget::modelTransform (GLuint VAO)
 {
   // Matriu de transformació de model
   glm::mat4 transform (1.0f);
+  transform = glm::translate(transform, boundingbox->get_center());
   transform = glm::scale(transform, glm::vec3(escala));
+  transform = glm::translate(transform, glm::vec3(-1.0f, -1.0f, -1.0f)*boundingbox->get_center());
   if (VAO == VAO_Homer)
   {
+    // Vamos a centrar al homer.
+    //BoundingBox* hbb = new BoundingBox();
+    //hbb->insert_model(homer);
+    //transform = glm::translate(transform, glm::vec3(-1.0f, -1.0f, -1.0f)*hbb->get_center());
     transform = glm::rotate(transform, homer_deg, glm::vec3(0.0f, 1.0f, 0.0f));
   }
   if (VAO == VAO_suelo)
-    transform = glm::translate(transform, glm::vec3(0, 0.0f, 0));
+    transform = glm::translate(transform, glm::vec3(0.0f, 0.0f, 0.0f));
   glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
 }
 
@@ -202,20 +210,9 @@ void BL2GLWidget::creaBuffers ()
   glEnableVertexAttribArray(colorLoc);
 
   // Buscamos la altura del homer.
-  glm::vec3 x, y;
-  y[0] = homer.vertices()[0];
-  y[1] = homer.vertices()[1];
-  y[2] = homer.vertices()[2];
-  for (int i = 3; i < homer.vertices().size(); i+=3)
-  {
-      if (homer.vertices()[i] > y[0]) y[0] = homer.vertices()[i];
-      if (homer.vertices()[i+1] > y[1]) y[1] = homer.vertices()[i+1];
-      if (homer.vertices()[i+2] > y[2]) y[2] = homer.vertices()[i+2];
-  }
-
-  x = glm::vec3(-4.0f, 0.0f, -4.0f);
-  y[0] = y[2] = 4.0f;
-  boundingbox = new BoundingBox(x, y);
+  boundingbox = new BoundingBox();
+  boundingbox->insert_model(homer);
+  boundingbox->insert_model(suelo, 6);
 
   glBindVertexArray (0);
 }
