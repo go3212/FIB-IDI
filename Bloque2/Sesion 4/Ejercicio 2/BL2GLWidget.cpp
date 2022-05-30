@@ -5,8 +5,13 @@
 BL2GLWidget::BL2GLWidget (QWidget* parent) : QOpenGLWidget(parent), program(NULL)
 {
   setFocusPolicy(Qt::StrongFocus);  // per rebre events de teclat
-  homer.load("homer.obj");
+  homer.load("Patricio.obj");
   homer_deg = 0.0f;
+
+  // angles
+  phi = theta = psi = 0.0f;
+  x_prev = y_prev = 0.0f;
+  zoom = 1.0f;
 }
 
 BL2GLWidget::~BL2GLWidget ()
@@ -25,7 +30,10 @@ void BL2GLWidget::ini_camera ()
   OBS[2] += 3.0f*boundingbox->get_radius();
 
   FOV = 2.0f*asin(1.0f/3.0f);
-  ra = 1.0f;
+  ra = (float)ample/(float)alt;
+  if (ra < 1.0f) // alto > ancho
+    FOV = 2.0f*atan((tan(FOV/2.0f)*(1.0f/ra)));
+  FOV *= zoom;
   znear = 2.0f*boundingbox->get_radius();
   zfar = 4.0f*boundingbox->get_radius();
 
@@ -45,8 +53,6 @@ void BL2GLWidget::initializeGL ()
   creaBuffers();
   escala = 1.0f;
 
-  ini_camera();
-
   glEnable(GL_DEPTH_TEST); 
 }
 
@@ -59,8 +65,14 @@ void BL2GLWidget::projectTransform()
 
 void BL2GLWidget::viewTransform()
 {
-  glm::mat4 VM;
-  VM = glm::lookAt(OBS, VRP, up);
+  glm::mat4 VM(1.0f);
+  // Place OBS in origin.
+  VM = glm::translate(VM, glm::vec3(0.0f, 0.0f, -3.0f*boundingbox->get_radius()));
+  VM = glm::rotate(VM,       glm::radians(theta), glm::vec3(1.0f, 0.0f, 0.0f));
+  VM = glm::rotate(VM, -1.0f*glm::radians(psi),   glm::vec3(0.0f, 1.0f, 0.0f)); 
+  // Move VRP to origin.
+  VM = glm::translate(VM, -1.0f*VRP);
+  //VM = glm::lookAt(OBS, VRP, up);
   glUniformMatrix4fv(VMLoc, 1, GL_FALSE, &VM[0][0]);
 }
 
@@ -80,6 +92,18 @@ void BL2GLWidget::modelTransform (GLuint VAO)
   glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
 }
 
+void BL2GLWidget::patTransform(glm::vec3 pos, glm::vec3 looking)
+{
+  float angle = glm::acos(glm::dot(glm::normalize(looking), glm::vec3(0.0f, 0.0f, 1.0f)));
+  // Matriu de transformació de model
+  glm::mat4 transform (1.0f);
+  transform = glm::translate(transform, pos);
+  transform = glm::scale(transform, glm::vec3(escala));
+  transform = glm::rotate(transform, homer_deg + angle, glm::vec3(0.0f, 1.0f, 0.0f));
+  transform = glm::translate(transform, glm::vec3(-2.0f, 0.0f, -2.0f)); // El patricio original está en un borde para calcular correctamente la bounding box.
+  glUniformMatrix4fv(transLoc, 1, GL_FALSE, &transform[0][0]);
+}
+
 void BL2GLWidget::paintGL () 
 {
 // En cas de voler canviar els paràmetres del viewport, descomenteu la crida següent i
@@ -92,11 +116,17 @@ void BL2GLWidget::paintGL ()
   // Esborrem el frame-buffer
   glClear (GL_COLOR_BUFFER_BIT);
   // Carreguem la transformació de model
-  modelTransform(VAO_Homer);
-  // Activem el VAO per a pintar la caseta 
   glBindVertexArray (VAO_Homer);
-  // pintem
+  
+  patTransform(glm::vec3(2.0f, 0.0f, 2.0f), glm::vec3(0.0f, 0.0f, 1.0f));
   glDrawArrays(GL_TRIANGLES, 0, homer.faces().size()*3);
+
+  patTransform(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+  glDrawArrays(GL_TRIANGLES, 0, homer.faces().size()*3);
+
+  patTransform(glm::vec3(-2.0f, 0.0f, -2.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+  glDrawArrays(GL_TRIANGLES, 0, homer.faces().size()*3);
+
 
   // Carreguem la transformació de model
   modelTransform(VAO_suelo);
@@ -120,26 +150,40 @@ void BL2GLWidget::resizeGL (int w, int h)
 #else
   ample = w;
   alt = h;
+  ini_camera ();
+
 #endif
 }
 
 void BL2GLWidget::keyPressEvent(QKeyEvent* event) 
 {
   makeCurrent();
-  switch (event->key()) {
-    case Qt::Key_S: { // escalar a més gran
-      escala += 0.05;
-      break;
-    }
-    case Qt::Key_D: { // escalar a més petit
-      escala -= 0.05;
-      break;
-    case Qt::Key_R:
-      homer_deg += float(M_PI)/4.0f;
-      break;
-    }
+  switch (event->key()) 
+  {
+    case Qt::Key_S: escala += 0.05;                 break;
+    case Qt::Key_D: escala -= 0.05;                 break;
+    case Qt::Key_R: homer_deg += float(M_PI)/4.0f;  break;
+    case Qt::Key_Z: zoom -= 0.03f;   emit valueChangedFOV((zoom-1.0f)*-100.0f);               break;
+    case Qt::Key_X: zoom += 0.03f;   emit valueChangedFOV((zoom-1.0f)*-100.0f);             break;
     default: event->ignore(); break;
   }
+  ini_camera ();
+  update();
+}
+
+void BL2GLWidget::mouseMoveEvent(QMouseEvent* event)
+{
+  makeCurrent();
+  
+  if (event->x() > x_prev) psi -= 1.0f;
+  if (event->x() < x_prev) psi += 1.0f;
+  if (event->y() > y_prev) theta += 1.0f;
+  if (event->y() < y_prev) theta -= 1.0f;
+
+  x_prev = event->x();
+  y_prev = event->y();
+
+  viewTransform();
   update();
 }
 
@@ -155,8 +199,15 @@ void BL2GLWidget::creaBuffers ()
 
   glGenBuffers(2, VBO_Homer);
   glBindBuffer(GL_ARRAY_BUFFER, VBO_Homer[0]);
+
+  BoundingBox* patbox = new BoundingBox();
+  patbox->insert_model(homer);
+  patbox->move(glm::vec3(-1.0f, -1.0f, -1.0f)*patbox->get_base_center());
+  patbox->uniform_set_height(1.0f);
+  patbox->move(glm::vec3(2.0f, 0.0f, 2.0f));
+
   // Homer es todo triangulos, cada triangulo tiene 3 vértices con 3 floats -> 9 floats, 
-  glBufferData(GL_ARRAY_BUFFER, 9*sizeof(float)*homer.faces().size(), homer.VBO_vertices(), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, 9*sizeof(float)*homer.faces().size(), patbox->get_vertexs(), GL_STATIC_DRAW);
   glVertexAttribPointer(vertexLoc, 3, GL_FLOAT, false
                         , 3*sizeof(float) // Tenemos que cada triplete de coords son 3 floats. 
                         , 0);
@@ -173,13 +224,13 @@ void BL2GLWidget::creaBuffers ()
   glBindVertexArray(VAO_suelo);
   glm::vec3 suelo[6] =
   {
-    glm::vec3(4.0f, 0.0f, 4.0f),
-    glm::vec3(4.0f, 0.0f, -4.0f),
-    glm::vec3(-4.0f, 0.0f, 4.0f),
+    glm::vec3(2.5f, 0.0f, 2.5f),
+    glm::vec3(2.5f, 0.0f, -2.5f),
+    glm::vec3(-2.5f, 0.0f, 2.5f),
 
-    glm::vec3(-4.0f, 0.0f, -4.0f),
-    glm::vec3(4.0f, 0.0f, -4.0f),
-    glm::vec3(-4.0f, 0.0f, 4.0f)
+    glm::vec3(-2.5f, 0.0f, -2.5f),
+    glm::vec3(2.5f, 0.0f, -2.5f),
+    glm::vec3(-2.5f, 0.0f, 2.5f)
   };
 
   glm::vec3 col_suelo[6] =
@@ -206,8 +257,7 @@ void BL2GLWidget::creaBuffers ()
   glEnableVertexAttribArray(colorLoc);
 
   // Buscamos la altura del homer.
-  boundingbox = new BoundingBox();
-  boundingbox->insert_model(homer);
+  boundingbox = patbox;
   boundingbox->insert_model(suelo, 6);
 
   glBindVertexArray (0);
