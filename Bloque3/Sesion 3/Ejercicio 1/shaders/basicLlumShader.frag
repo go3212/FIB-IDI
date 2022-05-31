@@ -54,7 +54,9 @@ vec3 Especular (vec3 NormSCO, vec3 L, vec3 vertSCO, vec3 colFocus)
 void main()
 {
 	vec3 normSCO = normalize(f_normal);	
-	vec3 light   = normalize(f_light - f_vertex);
-	vec3 color = Ambient() + Difus(normSCO, light, colorFocus) + Especular(normSCO, light, f_vertex, colorFocus);
-	FragColor = vec4(color, 1.0);
+	vec3 lightSRC   = normalize(f_light - f_vertex);
+  vec3 lightCAM   = normalize(vec3(0.0,0.0,0.0) - f_vertex);
+	vec3 colorSRC = Difus(normSCO, lightSRC, colorFocus) + Especular(normSCO, lightSRC, f_vertex, colorFocus);
+  vec3 colorCAM = Difus(normSCO, lightCAM, colorFocus) + Especular(normSCO, lightCAM, f_vertex, colorFocus);
+	FragColor = vec4(Ambient() + colorSRC + colorCAM, 1.0);
 }

@@ -29,8 +29,7 @@ void main()
 {	
     f_vertex = (view*TG*vec4(vertex, 1.0)).xyz;
     f_normal = (inverse(transpose(mat3(view*TG))))*normal;
-    if (focusMode == 0) f_light = (view*vec4(posFocus, 1.0)).xyz;
-    else f_light =   vec3(0.0,0.0,0.0);
+    f_light = (view*vec4(posFocus, 1.0)).xyz;
 
     f_matamb  = matamb;
     f_matdiff = matdiff;

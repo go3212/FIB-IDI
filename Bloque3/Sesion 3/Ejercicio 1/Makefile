@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = Bloc3_Exemple1.0.0
-DISTDIR = /home/go3212/FIB-IDI/Bloque3/Sesion\ 2/Ejercicio\ 3/.tmp/Bloc3_Exemple1.0.0
+DISTDIR = /home/go3212/FIB-IDI/Bloque3/Sesion\ 3/Ejercicio\ 1/.tmp/Bloc3_Exemple1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1 -pipe -O2 -flto=16 -fno-fat-lto-objects -fuse-linker-plugin -fPIC
 LIBS          = $(SUBLIBS) /usr/lib/libQt5OpenGL.so /usr/lib/libQt5Widgets.so /usr/lib/libQt5Gui.so /usr/lib/libQt5Core.so -lGL -lpthread   
@@ -1218,20 +1218,20 @@ moc_MyForm.cpp: MyForm.h \
 		model.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include '/home/go3212/FIB-IDI/Bloque3/Sesion 2/Ejercicio 3/moc_predefs.h' -I/usr/lib/qt/mkspecs/linux-g++ -I'/home/go3212/FIB-IDI/Bloque3/Sesion 2/Ejercicio 3' -I/usr/include/glm -I'/home/go3212/FIB-IDI/Bloque3/Sesion 2/Ejercicio 3' -I/usr/include/qt -I/usr/include/qt/QtOpenGL -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/12.1.0 -I/usr/include/c++/12.1.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.1.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include-fixed -I/usr/include MyForm.h -o moc_MyForm.cpp
+	/usr/bin/moc $(DEFINES) --include '/home/go3212/FIB-IDI/Bloque3/Sesion 3/Ejercicio 1/moc_predefs.h' -I/usr/lib/qt/mkspecs/linux-g++ -I'/home/go3212/FIB-IDI/Bloque3/Sesion 3/Ejercicio 1' -I/usr/include/glm -I'/home/go3212/FIB-IDI/Bloque3/Sesion 3/Ejercicio 1' -I/usr/include/qt -I/usr/include/qt/QtOpenGL -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/12.1.0 -I/usr/include/c++/12.1.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.1.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include-fixed -I/usr/include MyForm.h -o moc_MyForm.cpp
 
 moc_BL3GLWidget.cpp: BL3GLWidget.h \
 		model.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include '/home/go3212/FIB-IDI/Bloque3/Sesion 2/Ejercicio 3/moc_predefs.h' -I/usr/lib/qt/mkspecs/linux-g++ -I'/home/go3212/FIB-IDI/Bloque3/Sesion 2/Ejercicio 3' -I/usr/include/glm -I'/home/go3212/FIB-IDI/Bloque3/Sesion 2/Ejercicio 3' -I/usr/include/qt -I/usr/include/qt/QtOpenGL -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/12.1.0 -I/usr/include/c++/12.1.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.1.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include-fixed -I/usr/include BL3GLWidget.h -o moc_BL3GLWidget.cpp
+	/usr/bin/moc $(DEFINES) --include '/home/go3212/FIB-IDI/Bloque3/Sesion 3/Ejercicio 1/moc_predefs.h' -I/usr/lib/qt/mkspecs/linux-g++ -I'/home/go3212/FIB-IDI/Bloque3/Sesion 3/Ejercicio 1' -I/usr/include/glm -I'/home/go3212/FIB-IDI/Bloque3/Sesion 3/Ejercicio 1' -I/usr/include/qt -I/usr/include/qt/QtOpenGL -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/12.1.0 -I/usr/include/c++/12.1.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.1.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include-fixed -I/usr/include BL3GLWidget.h -o moc_BL3GLWidget.cpp
 
 moc_MyGLWidget.cpp: MyGLWidget.h \
 		BL3GLWidget.h \
 		model.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include '/home/go3212/FIB-IDI/Bloque3/Sesion 2/Ejercicio 3/moc_predefs.h' -I/usr/lib/qt/mkspecs/linux-g++ -I'/home/go3212/FIB-IDI/Bloque3/Sesion 2/Ejercicio 3' -I/usr/include/glm -I'/home/go3212/FIB-IDI/Bloque3/Sesion 2/Ejercicio 3' -I/usr/include/qt -I/usr/include/qt/QtOpenGL -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/12.1.0 -I/usr/include/c++/12.1.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.1.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include-fixed -I/usr/include MyGLWidget.h -o moc_MyGLWidget.cpp
+	/usr/bin/moc $(DEFINES) --include '/home/go3212/FIB-IDI/Bloque3/Sesion 3/Ejercicio 1/moc_predefs.h' -I/usr/lib/qt/mkspecs/linux-g++ -I'/home/go3212/FIB-IDI/Bloque3/Sesion 3/Ejercicio 1' -I/usr/include/glm -I'/home/go3212/FIB-IDI/Bloque3/Sesion 3/Ejercicio 1' -I/usr/include/qt -I/usr/include/qt/QtOpenGL -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/12.1.0 -I/usr/include/c++/12.1.0/x86_64-pc-linux-gnu -I/usr/include/c++/12.1.0/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/12.1.0/include-fixed -I/usr/include MyGLWidget.h -o moc_MyGLWidget.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
