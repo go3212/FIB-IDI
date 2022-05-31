@@ -145,11 +145,6 @@ void MyGLWidget::projectTransform ()
   }
 }
 
-void send_light()
-{
-  
-}
-
 void MyGLWidget::keyPressEvent(QKeyEvent* event) {
   makeCurrent();
   switch (event->key()) {
